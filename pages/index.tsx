@@ -1,27 +1,29 @@
-import Head from 'next/head'
-import Link from 'next/link'
 import {Button} from '@material-ui/core'
-import {useSelector, useDispatch} from 'react-redux'
+import {useSession, signIn, signOut} from 'next-auth/client'
 
-import {IStore} from '../redux/'
+import Loader from '../components/Loader'
 
 
 const Home = () => {
-  const val = useSelector((state: IStore) => state.val),
-    dispatch = useDispatch();
+	const [session, loading] = useSession()
 
-  return(
-    <div>
-      <span onClick={() => dispatch({type: 'DEC'})}>-</span>
-      <span>{val}</span>
-      <span onClick={() => dispatch({type: 'INC'})}>+</span>
-      <br/>
+	if(loading)
+		return <Loader/>
 
-      <Button variant="contained" color="primary">
-        <Link href="/test">Test</Link>
-      </Button>
-    </div>
-  )
+	if(!session)
+		return (
+			<div>
+				<b>You are not signed in</b>
+				<Button variant="outlined" color="primary" onClick={signIn}>Sign in</Button>
+			</div>
+		)
+
+	return (
+		<div>
+			<div>Hi, {session.user.name}</div>
+			<Button variant="outlined" color="secondary" onClick={signOut}>Sign out</Button>
+		</div>
+	)
 }
 
-export default Home;
+export default Home
