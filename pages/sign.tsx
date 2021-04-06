@@ -1,11 +1,10 @@
-import MainLayout from '../layouts/MainLayout'
+import {Button} from '@material-ui/core';
+import {signIn} from 'next-auth/client';
 
 
 const SignPage: React.FC = () => {
 	return (
-		<MainLayout>
-			<div>Sign</div>
-		</MainLayout>
+		<Button color="primary" onClick={() => signIn()}>Sign in</Button>
 	);
 };
 

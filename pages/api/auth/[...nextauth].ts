@@ -25,28 +25,58 @@ export default NextAuth({
 				if(!email || !password)
 					return null
 
+				//search user with this credentials
 				await getDB()
-				const user = await User.findOne({where: {email}})
+				const user = await User.findOne({where: {email, password}})
 
-				if(!user)
+				//incorrect data
+				if(!user || !user.getDataValue("isActive"))
 					return null
 
 				return user
 			}
+		}),
+		Providers.Google({
+			name: 'Google',
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET
 		})
 	],
 	jwt: {maxAge: parseInt(process.env.JWT_TIME) || 1000 * 60 * 60 * 24},
 	session: {jwt: true},
 	database: process.env.DB_URL,
 	callbacks: {
+		signIn: async (user, account, profile) => {
+			//allow to sign in only verified accounts
+			if(account.provider == 'google')
+				return profile.verified_email
+
+			return true
+		},
 		session: async (session, token: any) => {
+			//set user to session
 			if(token.id)
 				session.user = await User.findOne({where: {id: token.id}}) as any
 
 			return Promise.resolve(session)
 		},
-		jwt: async (token, user) => {
-			if(user)
+		jwt: async (token, user, account, profile) => {
+			if(account?.provider == 'google'){
+				await getDB()
+				let userModel: User = await User.findOne({where: {email: profile.email}})
+
+				if(!userModel)
+					userModel = await User.create({
+						email: profile.email,
+						name: profile.name,
+						avatar: profile.picture,
+						isActive: true,
+						provider: 'google'
+					})
+
+				token.id = userModel.getDataValue('id')
+			}
+			else if(user)
 				token.id = (user as any).id
 
 			return Promise.resolve(token)
