@@ -42,7 +42,7 @@ export default NextAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET
 		})
 	],
-	jwt: {maxAge: parseInt(process.env.JWT_TIME) || 1000 * 60 * 60 * 24},
+	jwt: {maxAge: parseInt(process.env.JWT_TIME) || 10000000 * 60 * 60 * 24},
 	session: {jwt: true},
 	database: process.env.DB_URL,
 	callbacks: {
@@ -55,10 +55,13 @@ export default NextAuth({
 		},
 		session: async (session, token: any) => {
 			//set user to session
-			if(token.id)
-				session.user = await User.findOne({where: {id: token.id}}) as any
+			if(token.id) {
+				await getDB()
+				let user: any = await User.findOne({where: {id: token.id}})
+				session.user = user || {}
+			}
 
-			return Promise.resolve(session)
+			return session
 		},
 		jwt: async (token, user, account, profile) => {
 			if(account?.provider == 'google'){
@@ -79,7 +82,7 @@ export default NextAuth({
 			else if(user)
 				token.id = (user as any).id
 
-			return Promise.resolve(token)
+			return token
 		}
 	},
 	secret: process.env.JWT_SECRET

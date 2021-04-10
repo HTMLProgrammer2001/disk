@@ -1,34 +1,28 @@
-import {Button} from '@material-ui/core'
-import {useSession, signOut, getSession} from 'next-auth/client'
+import {getSession, useSession} from 'next-auth/client'
+import {GetServerSideProps} from 'next'
 
-import Loader from '../components/Loader'
-import MainLayout from '../layouts/MainLayout';
-import {GetServerSideProps} from 'next';
+import MainLayout from '../layouts/MainLayout'
+import redirectLogin from '../utils/helpers/redirectLogin';
+import requireAuth from '../utils/hoc/requireAuth';
 
 
 const Home = () => {
-	const [session, loading] = useSession()
+	const [session] = useSession()
 
 	return (
 		<MainLayout>
-			{loading && <Loader/>}
-
-			{!loading && <div>
-				<div>Hi, {session.user.name}</div>
-				<Button variant="outlined" color="secondary" onClick={() => signOut()}>Sign out</Button>
-			</div>}
+			<div>Hi, {session.user.name}</div>
 		</MainLayout>
 	)
 }
 
-export default Home
+export default requireAuth(Home)
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-	const {req, res} = ctx
-	const session = await getSession({req})
+export const getInitialProps: GetServerSideProps = async (ctx) => {
+	const session = await getSession({req: ctx.req})
 
 	if(!session?.user)
-		res.writeHead(302, {Location: '/sign'}).end()
+		redirectLogin(ctx)
 
 	return {props: {}}
 }
