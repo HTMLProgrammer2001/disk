@@ -14,7 +14,7 @@ export default NextAuth({
 	providers: [
 		Providers.Credentials({
 			id: 'email-and-password',
-			name: 'Email and pass',
+			name: 'Email and password',
 			credentials: {
 				email: { label: "Email", type: "text"},
 				password: {  label: "Password", type: "password" }
@@ -45,6 +45,7 @@ export default NextAuth({
 	jwt: {maxAge: parseInt(process.env.JWT_TIME) || 10000000 * 60 * 60 * 24},
 	session: {jwt: true},
 	database: process.env.DB_URL,
+	pages: {signIn: '/login', signOut: '/'},
 	callbacks: {
 		signIn: async (user, account, profile) => {
 			//allow to sign in only verified accounts
