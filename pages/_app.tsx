@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Head from 'next/head'
 import Router from 'next/router'
 import {ThemeProvider} from '@material-ui/core/styles'
@@ -9,6 +9,7 @@ import {ToastContainer} from 'react-toastify'
 
 import theme from '../theme'
 import wrapper from '../store/'
+import UserSession from '../utils/context/UserSessionContext'
 
 import 'nprogress/nprogress.css'
 import 'react-toastify/scss/main.scss'
@@ -22,6 +23,7 @@ Router.events.on('routeChangeError', () => NProgress.done())
 
 function MyApp(props) {
 	const {Component, pageProps} = props
+	const [session, setSession] = useState(pageProps.session)
 
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
@@ -33,17 +35,19 @@ function MyApp(props) {
 	}, [])
 
 	return (
-		<Provider session={pageProps.session}>
-			<Head>
-				<title>My disk</title>
-				<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>
-			</Head>
-			<ThemeProvider theme={theme}>
-				{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-				<CssBaseline/>
-				<ToastContainer/>
-				<Component {...pageProps} />
-			</ThemeProvider>
+		<Provider session={session}>
+			<UserSession.Provider value={{session, updateSession: setSession}}>
+				<Head>
+					<title>My disk</title>
+					<meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width"/>
+				</Head>
+				<ThemeProvider theme={theme}>
+					{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+					<CssBaseline/>
+					<ToastContainer/>
+					<Component {...pageProps} />
+				</ThemeProvider>
+			</UserSession.Provider>
 		</Provider>
 	)
 }

@@ -1,32 +1,22 @@
 import {GetServerSideProps} from 'next'
-import {getSession, useSession} from 'next-auth/client'
-import Avatar from '@material-ui/core/Avatar'
-import Box from '@material-ui/core/Box'
-import makeStyles from '@material-ui/core/styles/makeStyles'
+import {getSession} from 'next-auth/client'
+import React, {useState} from 'react'
 
-import MainLayout from '../layouts/MainLayout'
 import redirectLogin from '../utils/helpers/redirectLogin'
 import requireAuth from '../utils/hoc/requireAuth'
+import ProfileInfo from '../components/profile/ProfileInfo'
+import EditProfileForm from '../components/profile/EditProfileForm'
+import MainLayout from '../layouts/MainLayout'
 
-
-const useStyles = makeStyles({
-	avatar: {
-		width: '100px',
-		height: '100px'
-	}
-})
 
 const ProfilePage: React.FC = () => {
-	const [session] = useSession(),
-		styles = useStyles()
+	const [isEdit, setEdit] = useState(false)
 
 	return (
 		<MainLayout>
-			<Box alignItems="center" display="flex" flexDirection="column" p={3}>
-				<Avatar src={session.user.avatar} alt="Avatar" className={styles.avatar}/>
-				<Box>{session.user.name}</Box>
-				<Box>{session.user.email}</Box>
-			</Box>
+			{!isEdit ?
+				<ProfileInfo edit={() => setEdit(true)}/> :
+				<EditProfileForm edited={() => setEdit(false)}/>}
 		</MainLayout>
 	)
 }

@@ -56,11 +56,11 @@ export default NextAuth({
 		},
 		session: async (session, token: any) => {
 			//set user to session
-			if(token.id) {
-				await getDB()
-				let user: any = await User.findOne({where: {id: token.id}})
-				session.user = user || {}
-			}
+			await getDB()
+			const id = token.id || (session.user as any as User).getDataValue('id')
+
+			let user: any = await User.findOne({where: {id}})
+			session.user = user || {}
 
 			return session
 		},
