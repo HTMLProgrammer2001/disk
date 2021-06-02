@@ -10,6 +10,7 @@ export default (db: Sequelize) => {
 		name: {type: DataTypes.STRING, allowNull: false},
 		avatar: {type: DataTypes.STRING},
 		isActive: {type: DataTypes.BOOLEAN, defaultValue: false},
+		code: {type: DataTypes.STRING, unique: true},
 		provider: {type: DataTypes.STRING},
 		password: {type: DataTypes.STRING}
 	}, {sequelize: db, modelName: 'User'})

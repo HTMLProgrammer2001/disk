@@ -3,13 +3,16 @@ import Head from 'next/head'
 import Router from 'next/router'
 import {ThemeProvider} from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import {Provider} from 'next-auth/client';
+import {Provider} from 'next-auth/client'
 import NProgress from 'nprogress'
+import {ToastContainer} from 'react-toastify'
 
 import theme from '../theme'
 import wrapper from '../store/'
 
 import 'nprogress/nprogress.css'
+import 'react-toastify/scss/main.scss'
+import '../styles/globals.css'
 
 
 //bind events
@@ -38,6 +41,7 @@ function MyApp(props) {
 			<ThemeProvider theme={theme}>
 				{/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
 				<CssBaseline/>
+				<ToastContainer/>
 				<Component {...pageProps} />
 			</ThemeProvider>
 		</Provider>

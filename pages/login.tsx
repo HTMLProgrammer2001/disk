@@ -8,17 +8,16 @@ import LoginForm from '../components/login/LoginForm';
 
 
 type ISingInProps = {
-	providers: Record<string, SessionProvider>,
-	csrfToken: string
+	providers: Record<string, SessionProvider>
 }
 
-const Login: React.FC<ISingInProps> = ({providers, csrfToken}) => (
+const Login: React.FC<ISingInProps> = ({providers}) => (
 	<AuthLayout>
 		<Container maxWidth="sm">
 			<Typography component="h4" variant="h4" align="center">Login</Typography>
 
 			<Box alignContent="center" justifyContent="center" marginTop={3}>
-				<LoginForm token={csrfToken}/>
+				<LoginForm/>
 				<hr style={{margin: '1rem 0'}}/>
 				<Providers providers={providers}/>
 			</Box>
@@ -38,9 +37,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	}
 
 	return {
-		props: {
-			providers: await getProviders(),
-			csrfToken: await getCsrfToken(ctx),
-		}
+		props: {providers: await getProviders()}
 	};
 };

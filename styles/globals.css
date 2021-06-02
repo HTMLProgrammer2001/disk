@@ -7,10 +7,41 @@ body {
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+  color: cornflowerblue;
+  text-decoration: underline;
+}
+
+a:hover{
+    text-decoration: none;
 }
 
 * {
   box-sizing: border-box;
+}
+
+@keyframes rotate {
+    from{
+        transform: rotate(0deg);
+    }
+    50%{
+        transform: rotate(180deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes circle {
+    from{
+        width: 8px;
+        height: 8px;
+    }
+    50%{
+        width: 4px;
+        height: 4px;
+    }
+    to{
+        width: 8px;
+        height: 8px;
+    }
 }
