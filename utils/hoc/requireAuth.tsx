@@ -10,7 +10,7 @@ const requireAuth = (Elem: any) => (props: any) => {
 	if(!session && loading)
 		return <Loader/>
 
-	if(!session && !loading){
+	if(!loading && !session?.user?.id){
 		redirectLogin()
 		return
 	}

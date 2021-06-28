@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	const {req, res} = ctx
 	const session = await getSession({req})
 
-	if (session && res && session.user) {
+	if (res && session?.user?.id) {
 		res.writeHead(302, {Location: '/'}).end()
 		return
 	}

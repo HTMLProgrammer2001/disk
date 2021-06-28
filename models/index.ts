@@ -1,6 +1,9 @@
 import {Sequelize} from 'sequelize'
 
 import initUser from './User.model'
+import initFolder from './Folder.model'
+import initFile from './File.model'
+import initAccess from './Access.model'
 
 
 let db: Sequelize = null
@@ -13,6 +16,9 @@ export const initDB = async () => {
 
 	//init models
 	initUser(db)
+	initFolder(db)
+	initFile(db)
+	initAccess(db)
 
 	await db.sync({alter: true})
 	return db

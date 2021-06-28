@@ -27,7 +27,25 @@ const ProfileInfo: React.FC<IProfileInfoProps> = ({edit}) => {
 			<Box mt={3}>{session.user.name}</Box>
 			<Box mb={3}>{session.user.email}</Box>
 
-			<Button type="button" variant="contained" color="primary" onClick={edit}>Update</Button>
+			<Box display="flex">
+				<Button
+					type="button"
+					variant="contained"
+					color="primary"
+					onClick={edit}
+					style={{marginRight: '1rem'}}
+				>Update</Button>
+
+				<form action="/api/delete">
+					<Button
+						type="submit"
+						variant="contained"
+						color="secondary"
+					>
+						Delete
+					</Button>
+				</form>
+			</Box>
 		</Box>
 	)
 }

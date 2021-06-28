@@ -1,6 +1,4 @@
 import {NextApiHandler} from 'next'
-import fetch from 'node-fetch'
-import {getCsrfToken} from 'next-auth/client'
 
 import {getDB} from '../../models'
 import {User} from '../../models/User.model'

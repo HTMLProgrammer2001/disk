@@ -20,14 +20,17 @@ const handler = connect().post(async (req: NextApiRequest, res: NextApiResponse)
 	(form as any).keepExtensions = true
 
 	form.parse(req, async (err, fields, files) => {
-		const {name, email} = fields,
+		const {name, email, password, confirmPassword} = fields,
 			session = await getSession({req})
 
 		await getDB()
 
 		//validate
-		if(!session.user)
+		if(!session?.user)
 			return redirectLogin({req, res} as any)
+
+		if(password != confirmPassword)
+			return res.status(422).json({message: 'Passwords not same'})
 
 		//update
 		const userModel = await User.findOne({where: {email: session.user.email}})
@@ -39,7 +42,12 @@ const handler = connect().post(async (req: NextApiRequest, res: NextApiResponse)
 			avatar = process.env.NEXTAUTH_URL + name
 		}
 
-		await userModel.update({email, name, avatar})
+		const newData = {email, name, avatar}
+
+		if(password)
+			newData['password'] = password
+
+		await userModel.update(newData)
 		return res.json({message: 'User edited'})
 	})
 })

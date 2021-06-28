@@ -26,6 +26,8 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({edited}) => {
 
 		[email, setEmail] = useState(session.user.email),
 		[name, setName] = useState(session.user.name),
+		[password, setPassword] = useState(''),
+		[confirmPassword, setConfirmPassword] = useState(''),
 		[avatarFile, setAvatarFile] = useState<File>(null),
 		[isLoading, setLoading] = useState(false),
 		[error, setError] = useState('')
@@ -42,16 +44,23 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({edited}) => {
 				formData.set("name", name)
 				formData.set("email", email)
 				formData.set("avatar", avatarFile)
+				formData.set("password", password)
+				formData.set("confirmPassword", confirmPassword)
 
 				const resp = await axios.post('/api/edit', formData)
 
-				//update user object
-				const newSession = await getSession()
-				updateSession(newSession as any)
+				if(resp.status == 200){
+					//update user object
+					const newSession = await getSession()
+					updateSession(newSession as any)
 
-				//update ui
-				toast.success(resp.data.message)
-				edited()
+					//update ui
+					toast.success(resp.data.message)
+					edited()
+				}
+				else{
+					toast.error(resp.data.message);
+				}
 			} catch (err) {
 				setError(err.response?.data.message || err.message)
 			} finally {
@@ -77,6 +86,16 @@ const EditProfileForm: React.FC<IEditProfileForm> = ({edited}) => {
 				<TextField
 					type="text" name="name" label="Name" value={name} required
 					className={styles.input} onChange={e => setName(e.target.value)}
+				/>
+
+				<TextField
+					type="password" name="password" label="Password" value={password}
+					className={styles.input} onChange={e => setPassword(e.target.value)}
+				/>
+
+				<TextField
+					type="password" name="confirmPassword" label="Password" value={confirmPassword}
+					className={styles.input} onChange={e => setConfirmPassword(e.target.value)}
 				/>
 
 				<Box>
