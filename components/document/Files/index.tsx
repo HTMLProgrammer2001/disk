@@ -1,5 +1,7 @@
 import React from 'react'
 import {makeStyles} from '@material-ui/core'
+import useSWR from 'swr';
+import cn from 'classnames';
 
 
 const useStyles = makeStyles({
@@ -7,7 +9,8 @@ const useStyles = makeStyles({
 })
 
 const Files: React.FC<{ folderID: number }> = ({folderID}) => {
-	const styles = useStyles()
+	const styles = useStyles(),
+		{data, error} = useSWR('/api/files', {refreshInterval: 500})
 
 	return (
 		<div className={styles.wrapper}>

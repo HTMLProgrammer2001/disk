@@ -12,6 +12,7 @@ export default (db: Sequelize) => {
 		id: {type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true},
 		type: {type: DataTypes.STRING, allowNull: false},
 		link: {type: DataTypes.STRING, allowNull: true},
+
 		canEdit: {type: DataTypes.BOOLEAN, defaultValue: false}
 	}, {sequelize: db, modelName: 'Access'})
 

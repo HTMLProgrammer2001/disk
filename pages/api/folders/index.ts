@@ -1,25 +1,34 @@
-import {NextApiHandler} from 'next'
+import {NextApiHandler, NextApiRequest, NextApiResponse} from 'next'
 import {getSession} from 'next-auth/client'
+import connect from 'next-connect'
 
 import {getDB} from '../../../models'
 import {Folder} from '../../../models/Folder.model'
-import {User} from '../../../models/User.model';
 
 
-const handler: NextApiHandler = async (req, res) => {
-	await getDB()
-	const {user} = await getSession({req})
+const handler = connect()
+	.get(async (req: NextApiRequest, res: NextApiResponse) => {
+		await getDB()
+		const {user} = await getSession({req})
 
-	const errorURL = process.env.NEXTAUTH_URL + 'error';
+		//show error if user is not signed in
+		if (!user)
+			return res.status(401).json({message: 'You are not logged in'})
 
-	//show error if user is not signed in
-	if(!user) {
-		res.redirect(errorURL + '?msg=' + encodeURIComponent("You are not logged in") + "&statusCode=403")
-		return
-	}
+		const folders = await Folder.findAll({where: {owner: user.id}})
+		res.status(200).json({data: folders})
+	})
 
-	const folders = await Folder.findAll({where: {owner: user.id}})
-	res.status(200).json({data: folders})
-}
+	.post(async (req: NextApiRequest, res: NextApiResponse) => {
+		await getDB()
+		const {user} = await getSession({req})
+
+		//show error if user is not signed in
+		if (!user)
+			return res.status(401).json({message: 'You are not logged in'})
+
+		const newFolder = Folder.create({name: req.body.name, owner: user.id, UserId: user.id})
+		res.status(200).json({data: newFolder})
+	})
 
 export default handler
